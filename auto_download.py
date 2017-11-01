@@ -30,6 +30,8 @@ SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
 NEEQ_DOWNLOAD_URL = 'http://www.neeq.com.cn/nq/listedcompany.html'
 NEEQ_DATA_URL = 'http://www.neeq.com.cn/nqxxController/nqxx.do?page=0&typejb=T&xxzqdm=&xxzrlx=&xxhyzl=&xxssdq=&sortfield=xxzqdm&sorttype=asc&dicXxzbqs=&xxfcbj=&_=%s'
 TJ_NEEQ_DATA_URL = 'http://www.neeq.com.cn/nqxxController/nqxx.do?page=0&typejb=T&xxzqdm=&xxzrlx=&xxhyzl=&xxssdq=%25E5%25A4%25A9%25E6%25B4%25A5%25E5%25B8%2582&sortfield=xxzqdm&sorttype=asc&dicXxzbqs=&xxfcbj=&_='
+
+
 class StockListDownloader(object):
     def __init__(self):
         options = webdriver.ChromeOptions()
