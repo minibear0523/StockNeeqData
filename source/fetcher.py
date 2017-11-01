@@ -219,7 +219,12 @@ class Fetcher(object):
             else:
                 os.rename(sse_b_tj_filename + '.xls', sse_b_tj_filename_dist)
 
-            result['sse'] = [sse_a_filename_dist, sse_b_filename_dist, sse_a_tj_filename_dist, sse_b_filename_dist]
+            result['sse'] = {
+                'a': sse_a_filename_dist,
+                'b': sse_b_filename_dist,
+                'tj_a': sse_a_tj_filename_dist,
+                'tj_b': sse_b_tj_filename_dist
+            }
 
         if szse == True:
             self.download_szse()
@@ -232,7 +237,7 @@ class Fetcher(object):
             total_neeq, tj_neeq = self.download_neeq()
             result['total_neeq'] = total_neeq
             result['tj_neeq'] = tj_neeq
-            
+
         if kjxjr == True:
             total_kjxjr = self.download_kjxjr()
             result['kjxjr'] = total_kjxjr
