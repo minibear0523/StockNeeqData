@@ -24,14 +24,14 @@ class Parser(object):
         total_a_tj = sse_a_tj_df[sse_a_tj_df.columns[0]].count()
 
         sse_b_tj_df = pd.read_csv(self.files['sse']['tj_b'], encoding='gbk')
-        total_b_tj = sse_b_tj_df[sse_b_tj_df.cloumns[0]].count()
+        total_b_tj = sse_b_tj_df[sse_b_tj_df.columns[0]].count()
 
         return {'total_a': total_a, 'total_b': total_b, 'total_a_tj': total_a_tj, 'total_b_tj': total_b_tj}
 
     def parse_szse(self):
         if 'szse' not in self.files:
             return None
-        szse_df = pd.read_csv(self.files['szse'])
+        szse_df = pd.read_excel(self.files['szse'])
         total_count = szse_df['公司代码'].count()
         total_tj = szse_df[szse_df['省    份'] == '天津']['公司代码'].count()
         return {'total_szse': total_count, 'total_tj': total_tj}

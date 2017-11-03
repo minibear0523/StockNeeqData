@@ -2,6 +2,7 @@
 from envelopes import Envelope
 import ujson
 from settings import *
+import arrow
 
 
 class Report(object):
@@ -15,33 +16,36 @@ class Report(object):
         self.files = files
         self.date = arrow.now()
         self._form_report()
-        self.db = None
+        # self.db = None
 
     def _form_report(self):
         """
         生成邮件格式的报告, 需要从数据库拿到对应周首日的数据
         """
-        start_date = self.date.shift(days=-5).format('YYYY_MM_DD')
-        start_day_data = self.db.query(start_date)
-        if start_day_data:
-            self.subject = '沪深股市及新三板数据周报: %s至%s' % (start_date, self.date.format('YYYY_MM_DD'))
+        # start_date = self.date.shift(days=-5).format('YYYY_MM_DD')
+        # start_day_data = self.db.query(start_date)
+        # if start_day_data:
+        #     self.subject = '沪深股市及新三板数据周报: %s至%s' % (start_date, self.date.format('YYYY_MM_DD'))
+        #
+        # else:
+        self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')
+        self.report = '沪深股市及新三板数据日报: %s\n\n' % self.date.format('YYYY_MM_DD')
+        self.report += '上海证券交易所:\n'
+        total_a, total_a_tj = self.data['sse']['total_a'], self.data['sse']['total_a_tj']
+        self.report += '上交所A股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_a, total_a_tj)
+        total_b, total_b_tj = self.data['sse']['total_b'], self.data['sse']['total_b_tj']
+        self.report += '上交所B股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_b, total_b_tj)
+        self.report += '上交所共计上市 %s 家公司，其中天津地区共上市 %s 家公司;\n\n' % (total_a + total_b, total_a_tj + total_b_tj)
 
-        else:
-            self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')
-            self.report = '沪深股市及新三板数据日报: %s' % self.date_format('YYYY_MM_DD')
-            self.report += '上海证券交易所:\n'
-            total_a, total_a_tj = self.data['sse']['total_a'], self.data['sse']['total_a_tj']
-            self.report += '上交所A股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_a, total_a_tj)
-            total_b, total_b_tj = self.data['sse']['total_b'], self.data['sse']['total_b_tj']
-            self.report += '上交所B股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_b, total_b_tj)
-            self.report += '上交所共计上市 %s 家公司，其中天津地区共上市 %s 家公司;\n\n' % (total_a + total_b, total_a_tj + total_b_tj)
+        self.report += '深圳证券交易所:\n'
+        total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
+        self.report += '深交所主板、中心板块和创业板共计上市 %s 公司，其中天津地区上市 %s 家公司\n\n' % (total_szse, total_tj)
 
-            self.report += '深圳证券交易所:\n'
-            total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
-            self.report += '深交所主板、中心板块和创业板共计上市 %s 公司，其中天津地区上市 %s 家公司\n\n' % (total_szse, total_tj)
+        self.report += '沪深两市合计上市 %s 家公司，其中天津地区上市 %s 家公司\n\n' % ((total_a + total_b + total_szse), (total_a_tj + total_b_tj + total_tj))
 
-            self.report += '全国中小企业股份转让系统（新三板）:\n'
-            total_neeq, total_neeq_tj = self.data['neeq']
+        self.report += '全国中小企业股份转让系统（新三板）:\n'
+        total_neeq, total_neeq_tj = self.data['neeq']['total'], self.data['neeq']['tj']
+        self.report += '新三板共计挂牌 %s 家企业，其中天津地区挂牌 %s 家企业' % (total_neeq, total_neeq_tj)
 
     def send_report(self):
         """

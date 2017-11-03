@@ -29,4 +29,4 @@ class DB(object):
         """
         查找上一周的数据
         """
-        pass
+        return None
