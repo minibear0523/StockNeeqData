@@ -14,6 +14,7 @@ import ujson
 import arrow
 from lxml import etree
 from urllib.parse import urljoin
+import re
 
 
 headers = {
@@ -75,6 +76,7 @@ class Fetcher(object):
     def download_sse(self):
         """
         下载上交所数据, 分为A/B股的全量和天津地区数据
+        http://www.sse.com.cn/market/stockdata/statistic/
         """
         # 1. 打开上交所上市公司URL, 默认是A股全量数据
         self._open(SSE_DOWNLOAD_URL)
@@ -179,15 +181,24 @@ class Fetcher(object):
         }
         url = 'http://www.tstc.gov.cn/zhengwugongkai/zxgz/kjxzxqy/gzdt/'
         req = requests.get(url, headers=h)
+        tree = etree.HTML(req.content)
+
+        newest_url = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/@href')[0].strip()
+        newest_title = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/text()')[0].strip()
+
+        title_pattern = r'^全市(20[1-9][0-9])年1\-(1?[0-9])月份科技型企业认定情况通报$'
+        newest_date = None
+        g = re.match(title_pattern, newest_title)
+        if g:
+            newest_date = '%s_%s' % (g.groups()[0], g.groups()[1])
+        else:
+            newest_date = newest_title
+
+        req = requests.get(urljoin(url, newest_url), headers=h)
         tree = etree.HTML(req.text)
-        newest = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/span/text()')[0].strip()
-        newest_date = arrow.get(newest)
-        if arrow.now().month - newest_date.month < 1:
-            newest_url = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/@href')[0].strip()
-            req = requests.get(urljoin(url, newest_url), headers=h)
-            tree = etree.HTML(req.text)
-            return tree.xpath('//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p/b/span/text()')[0].strip()
-        return None
+        data = tree.xpath('//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p/b/span/text()')[0].strip()
+        return newest_date, data
+
 
     def fetch(self, sse=True, szse=True, neeq=True, kjxjr=True):
         result = {}

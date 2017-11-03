@@ -34,7 +34,7 @@ class Parser(object):
         szse_df = pd.read_csv(self.files['szse'])
         total_count = szse_df['公司代码'].count()
         total_tj = szse_df[szse_df['省    份'] == '天津']['公司代码'].count()
-        return {'total_count': total_count, 'total_tj': total_tj}
+        return {'total_szse': total_count, 'total_tj': total_tj}
 
     def parse(self):
         result = {}
