@@ -201,6 +201,10 @@ class Fetcher(object):
 
 
     def fetch(self, sse=True, szse=True, neeq=True, kjxjr=True):
+        """
+        需要进一步解耦合,将parser与fetcher的result分离, parser可以直接读取./data/中的文件目录,而不是通过fetcher的结果传入
+        将没有文件的新三板和科技小巨人保存到JSON文件或者csv文件中,便于parser解耦合之后也能找到对应数据
+        """
         result = {}
         if sse == True:
             self.download_sse()
@@ -252,5 +256,9 @@ class Fetcher(object):
         if kjxjr == True:
             total_kjxjr = self.download_kjxjr()
             result['kjxjr'] = total_kjxjr
+
+        # 将result直接写进文件中,parser读取文件,实现解耦合
+        with open(os.path.join(self.filepath, 'result.json'), 'wb') as f:
+            ujson.dump(result, f)
 
         return result
