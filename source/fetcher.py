@@ -15,6 +15,7 @@ import arrow
 from lxml import etree
 from urllib.parse import urljoin
 import re
+from pyvirtualdisplay import Display
 
 
 headers = {
@@ -51,6 +52,8 @@ class Fetcher(object):
         if not os.path.exists(self.filepath):
             os.makedirs(self.filepath)
         # Chrome Options: 确定文件下载的地址
+        self.display = Display(visible=0, size=(1024, 768))
+        self.display.start()
         options = webdriver.ChromeOptions()
         options.add_argument('user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"')
         options.add_argument('accept-language="zh-CN"')
@@ -60,13 +63,14 @@ class Fetcher(object):
         }
         options.add_experimental_option('prefs', prefs)
         # Selenium相关的初始化
-        self.driver = webdriver.Chrome('/home/zhanglei/Work/chromedriver', chrome_options=options)
+        self.driver = webdriver.Chrome(chrome_options=options)
         self.wait = WebDriverWait(self.driver, 20)
 
     def close_driver(self):
         if self.driver is not None:
             self.driver.close()
-        # TODO: 压缩filepath目录
+        if self.display is not None:
+            self.display.stop()
 
     def _open(self, url):
         if self.driver is None:
