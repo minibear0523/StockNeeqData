@@ -21,7 +21,7 @@ class DB(object):
 
     def insert(self, data):
         sql = 'INSERT INTO `stock_neeq_daily_data` (`sse_a_total`, `sse_a_tj`, `sse_b_total`, `sse_b_tj`, `szse_total`, `szse_tj`, `neeq_total`, `neeq_tj`, `updated_date`, `kjxjr_date`, `kjxjr`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        values = (data['sse']['total_a'], data['sse']['total_a_tj'], data['sse']['total_b'], data['sse']['total_b_tj'], data['szse']['total_szse'], data['szse']['total_tj'], data['neeq']['total'], data['neeq']['tj'], arrow.now().format('YYYY-MM-DD'), data['kjxjr_date'], data['kjxjr'])
+        values = (int(data['sse']['total_a']), int(data['sse']['total_a_tj']), int(data['sse']['total_b']), int(data['sse']['total_b_tj']), int(data['szse']['total_szse']), int(data['szse']['total_tj']), int(data['neeq']['total']), int(data['neeq']['tj']), arrow.now().format('YYYY-MM-DD'), data['kjxjr_date'], int(data['kjxjr']))
 
         try:
             self.cursor.execute(sql, values)
