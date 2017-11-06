@@ -34,4 +34,27 @@ class DB(object):
         """
         查找上一周的数据
         """
-        return None
+        sql = 'SELECT * FROM `stock_neeq_daily_data` WHERE updated_date="%s"' % date
+        if self.cursor.execute(sql) > 0:
+            result = self.cursor.fetchall()[0]
+            data = {}
+            data['sse'] = {
+                'total_a': result[1],
+                'total_a_tj': result[2],
+                'total_b': result[3],
+                'total_b_tj': result[4]
+            }
+            data['szse'] = {
+                'total_szse': result[5],
+                'total_tj': result[6],
+            }
+            data['neeq'] = {
+                'total': result[7],
+                'tj': result[8]
+            }
+            data['kjxjr_date'] = result[10]
+            data['kjxjr'] = result[11]
+
+            return data
+        else:
+            return None

@@ -15,7 +15,9 @@ def begin():
     db = DB()
     db.insert(parse_result)
 
-    if arrow.now().format('dddd') == 'Friday':
+    today = arrow.now()
+
+    if today.format('dddd') == 'Friday':
         r = Report(data=parse_result)
         r.send_report()
 
