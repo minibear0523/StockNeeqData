@@ -39,7 +39,7 @@ class Report(object):
             total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
             self.report += '深交所主板、中心板块和创业板共计上市 %s 公司, 本周变化 %s 家; 其中天津地区上市 %s 家公司, 本周变化 %s 家 \n\n' % (total_szse, int(total_szse) - last_week_data['szse']['total_szse'] , total_tj, int(total_tj) - last_week_data['szse']['total_tj'])
 
-            self.report += '沪深两市合计上市 %s 家公司, 本周变化 %s 家; 其中天津地区上市 %s 家公司, 本周变化 %s 家\n\n' % ((total_a + total_b + total_szse), (total_a + total_b + total_szse) - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'] - last_week_data['szse']['total_szse'], (total_a_tj + total_b_tj + total_tj), (total_a_tj + total_b_tj + total_tj) - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj'], last_week_data['szse']['total_tj'])
+            self.report += '沪深两市合计上市 %s 家公司, 本周变化 %s 家; 其中天津地区上市 %s 家公司, 本周变化 %s 家\n\n' % ((total_a + total_b + total_szse), (total_a + total_b + total_szse - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'] - last_week_data['szse']['total_szse']), (total_a_tj + total_b_tj + total_tj), (total_a_tj + total_b_tj + total_tj - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj']), last_week_data['szse']['total_tj'])
 
             self.report += '全国中小企业股份转让系统（新三板）:\n'
             total_neeq, total_neeq_tj = self.data['neeq']['total'], self.data['neeq']['tj']
