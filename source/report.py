@@ -22,7 +22,8 @@ class Report(object):
         """
         生成邮件格式的报告, 需要从数据库拿到对应周首日的数据
         """
-        last_week = self.date.shift(days=-7).format('YYYY-MM-DD')
+        # last_week = self.date.shift(days=-7).format('YYYY-MM-DD')
+        last_week = '2017-11-03'
         last_week_data = db.query(date=last_week)
         if last_week_data:
             self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')

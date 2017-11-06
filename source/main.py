@@ -17,7 +17,7 @@ def begin():
 
     today = arrow.now()
 
-    if today.format('dddd') == 'Friday':
+    if today.format('dddd') == 'Monday':
         r = Report(data=parse_result)
         r.send_report()
 
