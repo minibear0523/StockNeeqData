@@ -12,7 +12,7 @@ def begin():
     parse_result = p.parse()
 
     db = DB()
-    db.inert(parse_result)
+    db.insert(parse_result)
 
     r = Report(data=parse_result)
     r.send_report()

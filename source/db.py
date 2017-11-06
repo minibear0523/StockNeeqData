@@ -19,13 +19,16 @@ class DB(object):
         )
         self.cursor = self.connect.cursor()
 
-    def __del__(self):
-        self.connect.close()
-
-
     def insert(self, data):
         sql = 'INSERT INTO `stock_neeq_daily_data` (`sse_a_total`, `sse_a_tj`, `sse_b_total`, `sse_b_tj`, `szse_total`, `szse_tj`, `neeq_total`, `neeq_tj`, `updated_date`, `kjxjr_date`, `kjxjr`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         values = (data['sse']['total_a'], data['sse']['total_a_tj'], data['sse']['total_b'], data['sse']['total_b_tj'], data['szse']['total_szse'], data['szse']['total_tj'], data['neeq']['total'], data['neeq']['tj'], arrow.now.formt('YYYY-MM-DD'), data['kjxjr_date'], data['kjxjr'])
+
+        try:
+            self.cursor.execute(sql, values)
+            self.connect.commit()
+        except Exception as e:
+            print(e)
+
 
     def query(self, date):
         """
