@@ -24,7 +24,7 @@ class Report(object):
         """
         # last_week = self.date.shift(days=-7).format('YYYY-MM-DD')
         last_week = '2017-11-03'
-        last_week_data = db.query(date=last_week)
+        last_week_data = self.db.query(date=last_week)
         if last_week_data:
             self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')
             self.report = '沪深股市及新三板数据日报: %s\n\n' % self.date.format('YYYY_MM_DD')
