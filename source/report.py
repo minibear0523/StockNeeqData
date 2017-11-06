@@ -26,14 +26,19 @@ class Report(object):
         last_week = '2017-11-03'
         last_week_data = self.db.query(date=last_week)
         if last_week_data:
-            self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')
+            self.subject = '沪深股市及新三板数据周报: %s至%s' % (last_week, self.date.format('YYYY-MM-DD'))
             self.report = '沪深股市及新三板数据日报: %s\n\n' % self.date.format('YYYY_MM_DD')
             self.report += '上海证券交易所:\n'
+
             total_a, total_a_tj = self.data['sse']['total_a'], self.data['sse']['total_a_tj']
-            self.report += '上交所A股共计上市 %s 家公司, 本周变化 %s 家公司; 其中天津地区上市 %s 家公司, 本周变化 %s 家公司;\n' % (total_a, int(total_a) - last_week_data['sse']['total_a'], total_a_tj, int(total_a_tj) - last_week_data['sse']['total_a_tj'])
+            self.report += '上交所A股共计上市 %s 家公司; 其中天津地区上市 %s 家公司;\n' % (total_a, total_a_tj)
+            self.report += '上交所A股本周增(减) %s 家公司, 其中天津地区增(减) %s 家公司\n' % (int(total_a) - last_week_data['sse']['total_a'], int(total_a_tj) - last_week_data['sse']['total_a_tj'])
+
             total_b, total_b_tj = self.data['sse']['total_b'], self.data['sse']['total_b_tj']
-            self.report += '上交所B股共计上市 %s 家公司, 本周变化 %s 家; 其中天津地区上市 %s 家公司, 本周变化 %s 家;\n' % (total_b, int(total_b) - last_week_data['sse']['total_b'], total_b_tj, int(total_b_tj) - last_week_data['sse']['total_b_tj'])
-            self.report += '上交所共计上市 %s 家公司, 本周变化 %s 家; 其中天津地区共上市 %s 家公司, 本周变化 %s 家;\n\n' % (total_a + total_b, int(total_a) + int(total_b) - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'], total_a_tj + total_b_tj, int(total_a_tj) + int(total_b_tj) - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj'])
+            self.report += '上交所B股共计上市 %s 家公司; 其中天津地区上市 %s 家公司;\n' % (total_b, total_b_tj)
+            self.report += '上交所本周增(减) %s 家公司; 其中天津地区增(减) %s 家公司\n' % (int(total_b) - last_week_data['sse']['total_b'], int(total_b_tj) - last_week_data['sse']['total_b_tj'])
+
+            self.report += '上交所共计上市 %s 家公司, 本周增(减) %s 家; 其中天津地区共上市 %s 家公司, 本周增(减) %s 家;\n\n' % (total_a + total_b, int(total_a) + int(total_b) - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'], total_a_tj + total_b_tj, int(total_a_tj) + int(total_b_tj) - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj'])
 
             self.report += '深圳证券交易所:\n'
             total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
