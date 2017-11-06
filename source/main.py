@@ -2,14 +2,19 @@
 from fetcher import Fetcher
 from parser import Parser
 from report import Report
+from db import DB
 
 
 def begin():
-    f = Fetcher()
-    fetch_result = f.fetch()
-    p = Parser(fetch_result)
+    # f = Fetcher()
+    # fetch_result = f.fetch()
+    p = Parser()
     parse_result = p.parse()
-    r = Report(data=parse_result, files=fetch_result)
+
+    db = DB()
+    db.inert(parse_result)
+
+    r = Report(data=parse_result)
     r.send_report()
 
 if __name__ == '__main__':

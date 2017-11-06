@@ -5,7 +5,7 @@ import os
 import ujson
 
 class Parser(object):
-    def __init__(self, files):
+    def __init__(self, files=None):
         self.date = arrow.now().format('YYYY_MM_DD')
         self.filepath = './data/%s' % self.date
         self.files = None
@@ -77,5 +77,6 @@ class Parser(object):
 
         if 'kjxjr' in self.files:
             result['kjxjr'] = self.files['kjxjr']
+            result['kjxjr_date'] = self.files['kjxjr_date']
 
         return result

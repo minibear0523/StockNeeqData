@@ -254,11 +254,10 @@ class Fetcher(object):
             result['tj_neeq'] = tj_neeq
 
         if kjxjr == True:
-            total_kjxjr = self.download_kjxjr()
-            result['kjxjr'] = total_kjxjr
+            result['kjxjr_date'], result['kjxjr'] = self.download_kjxjr()
 
         # 将result直接写进文件中,parser读取文件,实现解耦合
-        with open(os.path.join(self.filepath, 'result.json'), 'wb') as f:
+        with open(os.path.join(self.filepath, 'result.json'), 'w') as f:
             ujson.dump(result, f)
 
         return result
