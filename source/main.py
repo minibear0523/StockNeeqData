@@ -7,8 +7,8 @@ import arrow
 
 
 def begin():
-    # f = Fetcher()
-    # fetch_result = f.fetch()
+    f = Fetcher()
+    fetch_result = f.fetch()
     p = Parser()
     parse_result = p.parse()
 
@@ -16,10 +16,14 @@ def begin():
     db.insert(parse_result)
 
     today = arrow.now()
+    r = Report(data=parse_result)
+    if today.format('dddd') == 'Friday':
+        to_addr = [('zhanglei@jixiang2003.com', '张磊'), ('zhangyongquan@jixiang2003.com', '张永泉')]
+        r.send_report(to_addr=to_addr)
+    else:
+        to_addr = [('zhanglei@jixiang2003.com', '张磊'),]
+        r.send_report(to_addr=to_addr)
 
-    if today.format('dddd') == 'Monday':
-        r = Report(data=parse_result)
-        r.send_report()
 
 if __name__ == '__main__':
     begin()
