@@ -142,13 +142,13 @@ class Report(object):
         from_addr = ('zhanglei@jixiang2003.com', '张磊')
         to_addr = to_addr
         subject = self.subject
-        text_body = self.report
+        html_body = self.report
 
         client = Envelope(
             from_addr=from_addr,
             to_addr=to_addr,
             subject=subject,
-            text_body=text_body
+            html_body=html_body
         )
 
         client.send(MAIL_SERVER, login=MAIL_LOGIN, password=MAIL_PASSWD, tls=False)
