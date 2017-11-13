@@ -63,7 +63,7 @@ class DB(object):
         """
         单独寻找上一月的科技小巨人数据
         """
-        sql = 'SELECT kjxjr from `stock_neeq_daily_data` WHERE kjxjr_data="%s"' % date
+        sql = 'SELECT kjxjr from `stock_neeq_daily_data` WHERE kjxjr_date="%s"' % date
         if self.cursor.execute(sql) > 0:
             result = self.cursor.fetchall()[0]
             return result[0]
