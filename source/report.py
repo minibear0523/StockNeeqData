@@ -63,7 +63,7 @@ class Report(object):
         today_kjxjr = today_data['kjxjr']
         data = [
             [today_sse_a, today_sse_a_tj],
-            [today_sse_b, today_see_b_tj],
+            [today_sse_b, today_sse_b_tj],
             [today_sse, today_sse_tj],
             [today_szse, today_szse_tj],
             [today_sse + today_szse, today_sse_tj + today_szse_tj],
