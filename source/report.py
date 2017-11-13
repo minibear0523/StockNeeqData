@@ -3,6 +3,8 @@ from envelopes import Envelope
 import ujson
 from settings import *
 import arrow
+import re
+import pandas as pd
 from db import DB
 
 
@@ -10,8 +12,7 @@ class Report(object):
     """
     生成报告, 发送邮件
     """
-    def __init__(self, data):
-        self.data = data
+    def __init__(self):
         self.report = None
         self.subject = None
         self.db = DB()
@@ -20,66 +21,119 @@ class Report(object):
 
     def _form_report(self):
         """
-        生成邮件格式的报告, 需要从数据库拿到对应周首日的数据
+        直接从数据库读取数据, 导入到pandas生成html代码
         """
-        if self.date.format('dddd') == 'Friday':
-            last_week = self.date.shift(days=-7).format('YYYY-MM-DD')
-            last_week_data = self.db.query(date=last_week)
-            if last_week_data:
-                self.subject = '沪深股市及新三板数据周报: %s至%s' % (last_week, self.date.format('YYYY-MM-DD'))
-                self.report = '沪深股市及新三板数据日报: %s\n\n' % self.date.format('YYYY_MM_DD')
-                self.report += '上海证券交易所:\n'
+        if self.data.format('dddd') == 'Friday':
+            # 周五读取当日和上周五的数据
+            # 将沪深两市分量和总量以及新三板放在一个表格中, 上交所A,B板一个表格, 科技小巨人一个表格
+            today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
+            last_date = self.date.shift(days=-7).format('YYYY-MM-DD')
+            last_data = self.db.query(date=last_date)
+            total_data, sse_data, kjxjr_data = self._parse_weekly_data(today_data, last_data)
 
-                total_a, total_a_tj = self.data['sse']['total_a'], self.data['sse']['total_a_tj']
-                self.report += '上交所A股共计上市 %s 家公司; 其中天津地区上市 %s 家公司;\n' % (total_a, total_a_tj)
-                self.report += '上交所A股本周增(减) %s 家公司, 其中天津地区增(减) %s 家公司\n\n' % (int(total_a) - last_week_data['sse']['total_a'], int(total_a_tj) - last_week_data['sse']['total_a_tj'])
+            self.report = total_data.to_html(escape=False)
+            self.report += '<br>'
+            self.report += sse_data.to_html(escape=False)
+            self.report += '<br>'
+            self.report += kjxjr_data.to_html(escape=False)
 
-                total_b, total_b_tj = self.data['sse']['total_b'], self.data['sse']['total_b_tj']
-                self.report += '上交所B股共计上市 %s 家公司; 其中天津地区上市 %s 家公司;\n' % (total_b, total_b_tj)
-                self.report += '上交所本周增(减) %s 家公司; 其中天津地区增(减) %s 家公司\n\n' % (int(total_b) - last_week_data['sse']['total_b'], int(total_b_tj) - last_week_data['sse']['total_b_tj'])
+            self.subject = '数据周报: %s至%s' % (self.date.format('YYYY-MM-DD'), last_date)
+        else:
+            today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
+            df = self._parse_daily_data(today_data)
+            self.report = df.to_html(escape=False)
+            self.subject = '数据日报: %s' % self.date.format('YYYY-MM-dd')
 
-                self.report += '上交所共计上市 %s 家公司; 其中天津地区共上市 %s 家公司;\n' % (total_a + total_b, total_a_tj + total_b_tj)
-                self.report += '上交所本周共计增(减) %s 家公司, 其中天津地区增(减) %s 家\n\n' % (int(total_a) + int(total_b) - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'], int(total_a_tj) + int(total_b_tj) - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj'])
+    def _parse_daily_data(self, today_data):
+        """
+        解析当日数据
+        """
+        stock_columns = ['今日总量', '今日天津地区']
+        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板', '科技小巨人']
 
-                self.report += '深圳证券交易所:\n'
-                total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
-                self.report += '深交所主板、中心板块和创业板共计上市 %s 公司; 其中天津地区上市 %s 家公司;\n' % (total_szse, total_tj)
-                self.report += '深交所本周共计增(减) %s 家公司, 其中天津地区本周增(减) %s 家;\n\n' % (int(total_szse) - last_week_data['szse']['total_szse'], int(total_tj) - last_week_data['szse']['total_tj'])
+        today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
+        today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
+        today_sse = today_sse_a + today_sse_b
+        today_sse_tj = today_sse_a_tj + today_sse_b_tj
+        today_szse = today_data['szse']['total_szse']
+        today_szse_tj = today_data['szse']['total_tj']
+        today_neeq = today_data['neeq']['total']
+        today_neeq_tj = today_data['neeq']['tj']
+        today_kjxjr_date = today_data['kjxjr_date']
+        today_kjxjr = today_data['kjxjr']
+        data = [
+            [today_sse_a, today_sse_a_tj],
+            [today_sse_b, today_see_b_tj],
+            [today_sse, today_sse_tj],
+            [today_szse, today_szse_tj],
+            [today_sse + today_szse, today_sse_tj + today_szse_tj],
+            [today_neeq, today_neeq_tj],
+            [today_kjxjr_date, today_kjxjr]
+        ]
 
-                self.report += '沪深两市合计上市 %s 家公司; 其中天津地区上市 %s 家公司\n' % ((total_a + total_b + total_szse), (total_a_tj + total_b_tj + total_tj))
-                self.report += '沪深两市本周共计增(减) %s 家公司, 其中天津地区本周增(减) %s 家\n\n' % ((total_a + total_b + total_szse - last_week_data['sse']['total_a'] - last_week_data['sse']['total_b'] - last_week_data['szse']['total_szse']), (total_a_tj + total_b_tj + total_tj - last_week_data['sse']['total_a_tj'] - last_week_data['sse']['total_b_tj'] - last_week_data['szse']['total_tj']))
+        df = pd.DataFrame(data, columns=stock_columns, index=labels)
+        return df
 
-                self.report += '全国中小企业股份转让系统（新三板）:\n'
-                total_neeq, total_neeq_tj = self.data['neeq']['total'], self.data['neeq']['tj']
-                self.report += '新三板共计挂牌 %s 家企业; 其中天津地区挂牌 %s 家企业\n' % (total_neeq, total_neeq_tj)
-                self.report += '新三板本周增(减) %s 家企业, 其中天津地区增(减) %s 家\n\n' % (total_neeq - last_week_data['neeq']['total'], total_neeq_tj - last_week_data['neeq']['tj'])
 
-                self.report += '天津市科学技术委员会科技小巨人认定情况:\n'
-                self.report += '截至 %s, 天津市科学技术委员会总计认定科技小巨人企业 %s 家\n\n' % (self.data['kjxjr_date'], self.data['kjxjr'])
-                return
+    def _parse_weekly_data(self, today_data, last_data):
+        """
+        解析本周五和上周五的数据, 返回三个list, 分别为全量数据, 上交所AB板数据和科技小巨人数据
+        """
+        stock_columns = ['本周总量', '上周总量', '本周总量变化', '本周天津地区', '上周天津地区', '本周天津地区变化']
+        kjxjr_columns = ['当前公布月份', '当前公布总量', '上月公布总量', '变化']
+        total_labels = ['上交所', '深交所', '沪深两市', '新三板']
+        sse_labels = ['上交所A板', '上交所B板', '上交所总量']
+        kjxjr_labels = ['天津市科技小巨人认证企业']
 
-        # 周五发送周报, 平时发送日报
-        self.subject = '沪深股市及新三板数据日报: %s' % self.date.format('YYYY_MM_DD')
-        self.report = '沪深股市及新三板数据日报: %s\n\n' % self.date.format('YYYY_MM_DD')
-        self.report += '上海证券交易所:\n'
-        total_a, total_a_tj = self.data['sse']['total_a'], self.data['sse']['total_a_tj']
-        self.report += '上交所A股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_a, total_a_tj)
-        total_b, total_b_tj = self.data['sse']['total_b'], self.data['sse']['total_b_tj']
-        self.report += '上交所B股共计上市 %s 家公司，其中天津地区上市 %s 家公司;\n' % (total_b, total_b_tj)
-        self.report += '上交所共计上市 %s 家公司，其中天津地区共上市 %s 家公司;\n\n' % (total_a + total_b, total_a_tj + total_b_tj)
+        # 总量表格
+        total_data = []
+        # 上交所
+        today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
+        today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
+        last_sse_a, last_sse_b = last_data['sse']['total_a'],  last_data['sse']['total_b']
+        last_sse_a_tj, last_sse_b_tj = last_data['sse']['total_a_tj'], last_data['sse']['total_b_tj']
 
-        self.report += '深圳证券交易所:\n'
-        total_szse, total_tj = self.data['szse']['total_szse'], self.data['szse']['total_tj']
-        self.report += '深交所主板、中心板块和创业板共计上市 %s 公司，其中天津地区上市 %s 家公司\n\n' % (total_szse, total_tj)
 
-        self.report += '沪深两市合计上市 %s 家公司，其中天津地区上市 %s 家公司\n\n' % ((total_a + total_b + total_szse), (total_a_tj + total_b_tj + total_tj))
+        today_sse = today_sse_a + today_sse_b
+        last_sse = last_sse_a + last_sse_b
+        today_sse_tj = today_sse_a_tj + today_sse_b_tj
+        last_sse_tj = last_sse_a_tj + last_sse_b_tj
+        total_data.append([today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj])
+        # 深交所
+        today_szse = today_data['szse']['total_szse']
+        last_szse = last_data['szse']['total_szse']
+        today_szse_tj = today_data['szse']['total_tj']
+        last_szse_tj = last_data['szse']['total_tj']
+        total_data.append([today_szse, last_szse, today_szse - last_szse, today_szse_tj, last_szse_tj, today_szse_tj - last_szse_tj])
+        # 沪深两市
+        total_data.append([today_sse + today_szse, last_sse + last_szse, today_sse + today_szse - last_sse - last_szse, today_sse_tj + today_szse_tj, last_sse_tj + last_szse_tj, today_sse_tj + today_szse_tj - last_sse_tj - last_szse_tj])
+        # 新三板
+        today_neeq = today_data['neeq']['total']
+        last_neeq = last_data['neeq']['total']
+        today_neeq_tj = today_data['neeq']['tj']
+        last_neeq_tj = last_data['neeq']['tj']
+        total_data.append([today_neeq, last_neeq, today_neeq - last_neeq, today_neeq_tj, last_neeq_tj, today_neeq_tj - last_neeq_tj])
 
-        self.report += '全国中小企业股份转让系统（新三板）:\n'
-        total_neeq, total_neeq_tj = self.data['neeq']['total'], self.data['neeq']['tj']
-        self.report += '新三板共计挂牌 %s 家企业，其中天津地区挂牌 %s 家企业\n\n' % (total_neeq, total_neeq_tj)
+        today_df = pd.DataFrame(total_data, columns=stock_columns, index=total_labels)
 
-        self.report += '天津市科学技术委员会科技小巨人认定情况:\n'
-        self.report += '截至 %s, 天津市科学技术委员会总计认定科技小巨人企业 %s 家\n\n' % (self.data['kjxjr_date'], self.data['kjxjr'])
+        # 上交所AB板
+        sse_data = [
+            [today_sse_a, last_sse_a, today_sse_a - last_sse_a, today_sse_a_tj, last_sse_a_tj, today_sse_a_tj - last_sse_a_tj],
+            [today_sse_b, last_sse_b, today_sse_b - last_sse_b, today_sse_b_tj, last_sse_b_tj, today_sse_b_tj - last_sse_b_tj],
+            [today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj]
+        ]
+        sse_df = pd.DataFrame(sse_data, columns=stock_columns, index=sse_labels)
+
+        # 科技小巨人
+        today_kjxjr_date = today_data['kjxjr_date']
+        today_kjxjr = today_data['kjxjr']
+        last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
+        last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
+        kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr, last_kjxjr, today_kjxjr - last_kjxjr]]
+        kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
+
+        return today_df, sse_df, kjxjr_df
+
 
     def send_report(self, to_addr):
         """
@@ -88,13 +142,13 @@ class Report(object):
         from_addr = ('zhanglei@jixiang2003.com', '张磊')
         to_addr = to_addr
         subject = self.subject
-        text_body = self.report
+        html_body = self.report
 
         client = Envelope(
             from_addr=from_addr,
             to_addr=to_addr,
             subject=subject,
-            text_body=text_body
+            html_body=html_body
         )
 
         client.send(MAIL_SERVER, login=MAIL_LOGIN, password=MAIL_PASSWD, tls=False)
