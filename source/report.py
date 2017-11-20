@@ -37,7 +37,7 @@ class Report(object):
             self.report += '<br>'
             self.report += kjxjr_data.to_html(escape=False)
 
-            self.subject = '数据周报: %s至%s' % (self.date.format('YYYY-MM-DD'), last_date)
+            self.subject = '数据周报: %s至%s' % (last_date, self.date.format('YYYY-MM-DD'))
         else:
             today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
             df = self._parse_daily_data(today_data)
