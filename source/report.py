@@ -42,7 +42,7 @@ class Report(object):
             today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
             df = self._parse_daily_data(today_data)
             self.report = df.to_html(escape=False)
-            self.subject = '数据日报: %s' % self.date.format('YYYY-MM-dd')
+            self.subject = '数据日报: %s' % self.date.format('YYYY-MM-DD')
 
     def _parse_daily_data(self, today_data):
         """
