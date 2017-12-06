@@ -64,7 +64,7 @@ class Fetcher(object):
         options.add_experimental_option('prefs', prefs)
         # Selenium相关的初始化
         self.driver = webdriver.Chrome('/home/zhanglei/Work/chromedriver', chrome_options=options)
-        self.wait = WebDriverWait(self.driver, 20)
+        self.wait = WebDriverWait(self.driver, 30)
 
     def close_driver(self):
         if self.driver is not None:
