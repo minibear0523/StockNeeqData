@@ -52,14 +52,14 @@ class Fetcher(object):
         if not os.path.exists(self.filepath):
             os.makedirs(self.filepath)
         # Chrome Options: 确定文件下载的地址
-        # self.display = Display(visible=0, size=(1024, 768))
-        # self.display.start()
+        self.display = Display(visible=0, size=(1024, 768))
+        self.display.start()
         options = webdriver.ChromeOptions()
         options.add_argument('user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"')
         options.add_argument('accept-language="zh-CN"')
         # 使用headless chrome取代之前的virtual display
-        options.add_argument('headless')
-        options.add_argument('window-size=1024x768')
+        # options.add_argument('headless')
+        # options.add_argument('window-size=1024x768')
 
         prefs = {
             'profile.default_content_settings.popups': 0,
@@ -73,8 +73,8 @@ class Fetcher(object):
     def close_driver(self):
         if self.driver is not None:
             self.driver.close()
-        # if self.display is not None:
-        #     self.display.stop()
+        if self.display is not None:
+            self.display.stop()
 
     def _open(self, url):
         if self.driver is None:
