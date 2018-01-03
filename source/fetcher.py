@@ -204,7 +204,7 @@ class Fetcher(object):
 
         req = requests.get(urljoin(url, newest_url), headers=h)
         tree = etree.HTML(req.text)
-        data = tree.xpath('//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p/span/text()')[0].strip()
+        data = tree.xpath('//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p//text()')[0].strip()
         return newest_date, data
 
 
