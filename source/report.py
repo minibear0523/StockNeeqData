@@ -49,7 +49,7 @@ class Report(object):
         解析当日数据
         """
         stock_columns = ['今日总量', '今日天津地区']
-        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板', '科技小巨人']
+        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板']
 
         today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
         today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
@@ -59,8 +59,8 @@ class Report(object):
         today_szse_tj = today_data['szse']['total_tj']
         today_neeq = today_data['neeq']['total']
         today_neeq_tj = today_data['neeq']['tj']
-        today_kjxjr_date = today_data['kjxjr_date']
-        today_kjxjr = today_data['kjxjr']
+        # today_kjxjr_date = today_data['kjxjr_date']
+        # today_kjxjr = today_data['kjxjr']
         data = [
             [today_sse_a, today_sse_a_tj],
             [today_sse_b, today_sse_b_tj],
@@ -68,7 +68,7 @@ class Report(object):
             [today_szse, today_szse_tj],
             [today_sse + today_szse, today_sse_tj + today_szse_tj],
             [today_neeq, today_neeq_tj],
-            [today_kjxjr_date, today_kjxjr]
+            # [today_kjxjr_date, today_kjxjr]
         ]
 
         df = pd.DataFrame(data, columns=stock_columns, index=labels)
@@ -129,7 +129,7 @@ class Report(object):
         today_kjxjr = today_data['kjxjr']
         last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
         last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
-        kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr, last_kjxjr, today_kjxjr - last_kjxjr]]
+        kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr + last_kjxjr, last_kjxjr, today_kjxjr]]
         kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
 
         return today_df, sse_df, kjxjr_df

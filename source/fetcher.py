@@ -187,14 +187,14 @@ class Fetcher(object):
             'Host': 'www.tstc.gov.cn',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
         }
-        url = 'http://www.tstc.gov.cn/zhengwugongkai/zxgz/kjxzxqy/gzdt/'
+        url = 'http://kxjs.tj.gov.cn/zhengwugongkai/zxgz/kjxzxqy/gzdt/'
         req = requests.get(url, headers=h)
         tree = etree.HTML(req.content)
 
         newest_url = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/@href')[0].strip()
         newest_title = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/text()')[0].strip()
 
-        title_pattern = r'^全市(20[1-9][0-9])年1\-(1?[0-9])月份科技型企业认定情况通报$'
+        title_pattern = r'^全市(20[1-9][0-9])年1\-(1?[0-9])月份科技型企业评价/认定情况通报$'
         newest_date = None
         g = re.match(title_pattern, newest_title)
         if g:
@@ -204,7 +204,7 @@ class Fetcher(object):
 
         req = requests.get(urljoin(url, newest_url), headers=h)
         tree = etree.HTML(req.text)
-        data = tree.xpath('//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p//text()')[0].strip()
+        data = tree.xpath('(//table[@class="MsoNormalTable"])[1]/tbody/tr[3]/td[5]/p//text()')[0].strip()
         return newest_date, data
 
 
