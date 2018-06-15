@@ -35,7 +35,14 @@ class Report(object):
             self.report += '<br>'
             self.report += sse_data.to_html(escape=False)
             self.report += '<br>'
-            self.report += kjxjr_data.to_html(escape=False)
+            # self.report += kjxjr_data.to_html(escape=False)
+            self.report += '截至%s:' % self.date.format('YYYY-MM-DD')
+            self.report += '<br>'
+            self.report += '全国上市公司%s家, 其中天津%s家' % (total_data['沪深两市']['本周总量'], total_data['沪深两市']['本周天津地区'])
+            self.report += '<br>'
+            self.report += '全国新三板挂牌公司%s家, 其中天津%s家' % (total_data['新三板']['本周总量'], total_data['新三板']['本周天津地区'])
+            self.report += '<br>'
+            self.report += '截止到2018年5月31日,天津市科委评定的规模超万亿元科技型企业共计4,343家'
 
             self.subject = '数据周报: %s至%s' % (last_date, self.date.format('YYYY-MM-DD'))
         else:
@@ -83,7 +90,7 @@ class Report(object):
         kjxjr_columns = ['当前公布月份', '当前公布总量', '上月公布总量', '变化']
         total_labels = ['上交所', '深交所', '沪深两市', '新三板']
         sse_labels = ['上交所A板', '上交所B板', '上交所总量']
-        kjxjr_labels = ['天津市科技小巨人认证企业']
+        # kjxjr_labels = ['天津市科技小巨人认证企业']
 
         # 总量表格
         total_data = []
@@ -125,14 +132,14 @@ class Report(object):
         sse_df = pd.DataFrame(sse_data, columns=stock_columns, index=sse_labels)
 
         # 科技小巨人
-        today_kjxjr_date = today_data['kjxjr_date']
-        today_kjxjr = today_data['kjxjr']
-        last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
-        last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
-        kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr + last_kjxjr, last_kjxjr, today_kjxjr]]
-        kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
+        # today_kjxjr_date = today_data['kjxjr_date']
+        # today_kjxjr = today_data['kjxjr']
+        # last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
+        # last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
+        # kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr + last_kjxjr, last_kjxjr, today_kjxjr]]
+        # kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
 
-        return today_df, sse_df, kjxjr_df
+        return today_df, sse_df, None
 
 
     def send_report(self, to_addr):
