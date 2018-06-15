@@ -38,9 +38,9 @@ class Report(object):
             # self.report += kjxjr_data.to_html(escape=False)
             self.report += '截至%s:' % self.date.format('YYYY-MM-DD')
             self.report += '<br>'
-            self.report += '全国上市公司%s家, 其中天津%s家' % (total_data['沪深两市']['本周总量'], total_data['沪深两市']['本周天津地区'])
+            self.report += '全国上市公司%s家, 其中天津%s家' % (total_data.loc['沪深两市', '本周总量'], total_data.loc['沪深两市', '本周天津地区'])
             self.report += '<br>'
-            self.report += '全国新三板挂牌公司%s家, 其中天津%s家' % (total_data['新三板']['本周总量'], total_data['新三板']['本周天津地区'])
+            self.report += '全国新三板挂牌公司%s家, 其中天津%s家' % (total_data.loc['新三板', '本周总量'], total_data.loc['新三板', '本周天津地区'])
             self.report += '<br>'
             self.report += '截止到2018年5月31日,天津市科委评定的规模超万亿元科技型企业共计4,343家'
 
