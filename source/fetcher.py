@@ -28,7 +28,8 @@ headers = {
 
 
 SSE_DOWNLOAD_URL = 'http://www.sse.com.cn/assortment/stock/list/share/'
-SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
+# SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
+SZSE_DOWNLOAD_URL = 'http://www.szse.cn/market/companys/company/index.html'
 NEEQ_DOWNLOAD_URL = 'http://www.neeq.com.cn/nq/listedcompany.html'
 NEEQ_DATA_URL = 'http://www.neeq.com.cn/nqxxController/nqxx.do?page=0&typejb=T&xxzqdm=&xxzrlx=&xxhyzl=&xxssdq=&sortfield=xxzqdm&sorttype=asc&dicXxzbqs=&xxfcbj=&_=%s'
 TJ_NEEQ_DATA_URL = 'http://www.neeq.com.cn/nqxxController/nqxx.do?page=0&typejb=T&xxzqdm=&xxzrlx=&xxhyzl=&xxssdq=%25E5%25A4%25A9%25E6%25B4%25A5%25E5%25B8%2582&sortfield=xxzqdm&sorttype=asc&dicXxzbqs=&xxfcbj=&_='
@@ -142,7 +143,9 @@ class Fetcher(object):
         """
         self._open(SZSE_DOWNLOAD_URL)
         print('下载深交所全量数据')
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//table[contains(@class, "cls-title-table-common")]/tbody/tr/td[@align="right"]/a')))
+        # download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//table[contains(@class, "cls-title-table-common")]/tbody/tr/td[@align="right"]/a')))
+        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class="report-table-head clearfix table-head-tabs"]/div[@class="pull-right report-excel"]/a')))
+        
         download_btn.click()
         time.sleep(15)
 
