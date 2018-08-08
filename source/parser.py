@@ -17,7 +17,7 @@ class Parser(object):
 
     def parse_sse(self):
         """
-        解析上交所的4份文件
+        重构解析上交所数据, 对同时在A | B上市的企业进行去重
         """
         sse_a_filename = None
         sse_b_filename = None
@@ -33,19 +33,29 @@ class Parser(object):
             sse_b_filename = self.files['sse']['b']
             sse_a_tj_filename = self.files['sse']['tj_a']
             sse_b_tj_filename = self.files['sse']['tj_b']
-        sse_a_df = pd.read_csv(sse_a_filename, encoding='gbk')
-        total_a = sse_a_df[sse_a_df.columns[0]].count()
+        # 读取数据表
+        sse_a_df = pd.read_table(sse_a_filename, encoding='gbk')
+        sse_b_df = pd.read_table(sse_b_filename, encoding='gbk')
+        sse_a_tj = pd.read_table(sse_a_tj_filename, encoding='gbk')
+        sse_b_tj = pd.read_table(sse_b_tj_filename, encoding='gbk')
 
-        sse_b_df = pd.read_csv(sse_b_filename, encoding='gbk')
-        total_b = sse_b_df[sse_b_df.columns[0]].count()
+        # 提取企业名称, 便于统计和去重
+        sse_a_titles = sse_a_df['公司简称 '].tolist()
+        sse_b_titles = sse_b_df['公司简称 '].tolist()
+        sse_a_tj_titles = sse_a_tj['公司简称 '].tolist()
+        sse_b_tj_titles = sse_b_tj['公司简称 '].tolist()
 
-        sse_a_tj_df = pd.read_csv(sse_a_tj_filename, encoding='gbk')
-        total_a_tj = sse_a_tj_df[sse_a_tj_df.columns[0]].count()
-
-        sse_b_tj_df = pd.read_csv(sse_b_tj_filename, encoding='gbk')
-        total_b_tj = sse_b_tj_df[sse_b_tj_df.columns[0]].count()
-
-        return {'total_a': total_a, 'total_b': total_b, 'total_a_tj': total_a_tj, 'total_b_tj': total_b_tj}
+        # 进行统计和去重
+        total_sse = list(set(sse_a_titles + sse_b_titles))
+        total_sse_tj = list(set(sse_a_tj_titles + sse_b_tj_titles))
+        return {
+            'total_a': len(sse_a_titles),
+            'total_b': len(sse_b_titles),
+            'total_a_tj': len(sse_a_tj_titles),
+            'total_b_tj': len(sse_b_tj_titles),
+            'total_sse': total_sse,
+            'total_sse_tj': total_sse_tj
+        }
 
     def parse_szse(self):
         szse_filename = None

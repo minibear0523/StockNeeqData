@@ -29,6 +29,9 @@ class Report(object):
             today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
             last_date = self.date.shift(days=-7).format('YYYY-MM-DD')
             last_data = self.db.query(date=last_date)
+            if last_data['sse']['total_sse'] == 0:
+                last_data['sse']['total_sse'] = int(last_data['sse']['total_a']) + int(last_data['sse']['total_b'])
+                last_data['sse']['total_sse_tj'] = int(last_data['sse']['total_a_tj']) + int(last_data['sse']['total_b_tj'])
             total_data, sse_data, kjxjr_data = self._parse_weekly_data(today_data, last_data)
 
             self.report = total_data.to_html(escape=False)
@@ -42,7 +45,7 @@ class Report(object):
             self.report += '<br>'
             self.report += '全国新三板挂牌公司%s家, 其中天津%s家' % (total_data.loc['新三板', '本周总量'], total_data.loc['新三板', '本周天津地区'])
             self.report += '<br>'
-            self.report += '截止到2018年5月31日,天津市科委评定的规模超万亿元科技型企业共计4,343家'
+            self.report += '截止到2018年%s月底,天津市科委评定的规模超万亿元科技型企业共计%家' % (total_data['kjxjr']['kjxjr_date'].split('_')[1], total_data['kjxjr']['kjxjr'])
 
             self.subject = '数据周报: %s至%s' % (last_date, self.date.format('YYYY-MM-DD'))
         else:
@@ -60,14 +63,14 @@ class Report(object):
 
         today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
         today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
-        today_sse = today_sse_a + today_sse_b
-        today_sse_tj = today_sse_a_tj + today_sse_b_tj
+        today_sse = today_data['sse']['total_sse']
+        today_sse_tj = today_data['sse']['total_sse_tj']
         today_szse = today_data['szse']['total_szse']
         today_szse_tj = today_data['szse']['total_tj']
         today_neeq = today_data['neeq']['total']
         today_neeq_tj = today_data['neeq']['tj']
-        # today_kjxjr_date = today_data['kjxjr_date']
-        # today_kjxjr = today_data['kjxjr']
+        today_kjxjr_date = today_data['kjxjr_date']
+        today_kjxjr = today_data['kjxjr']
         data = [
             [today_sse_a, today_sse_a_tj],
             [today_sse_b, today_sse_b_tj],
@@ -75,7 +78,7 @@ class Report(object):
             [today_szse, today_szse_tj],
             [today_sse + today_szse, today_sse_tj + today_szse_tj],
             [today_neeq, today_neeq_tj],
-            # [today_kjxjr_date, today_kjxjr]
+            [today_kjxjr_date, today_kjxjr]
         ]
 
         df = pd.DataFrame(data, columns=stock_columns, index=labels)
@@ -101,10 +104,10 @@ class Report(object):
         last_sse_a_tj, last_sse_b_tj = last_data['sse']['total_a_tj'], last_data['sse']['total_b_tj']
 
 
-        today_sse = today_sse_a + today_sse_b
-        last_sse = last_sse_a + last_sse_b
-        today_sse_tj = today_sse_a_tj + today_sse_b_tj
-        last_sse_tj = last_sse_a_tj + last_sse_b_tj
+        today_sse = today_data['sse']['total_sse']
+        last_sse = last_data['sse']['total_sse']
+        today_sse_tj = today_data['sse']['total_sse_tj']
+        last_sse_tj = last_data['sse']['total_sse_tj']
         total_data.append([today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj])
         # 深交所
         today_szse = today_data['szse']['total_szse']
@@ -131,13 +134,13 @@ class Report(object):
         ]
         sse_df = pd.DataFrame(sse_data, columns=stock_columns, index=sse_labels)
 
-        # 科技小巨人
-        # today_kjxjr_date = today_data['kjxjr_date']
-        # today_kjxjr = today_data['kjxjr']
-        # last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
-        # last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
-        # kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr + last_kjxjr, last_kjxjr, today_kjxjr]]
-        # kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
+        科技小巨人
+        today_kjxjr_date = today_data['kjxjr_date']
+        today_kjxjr = today_data['kjxjr']
+        last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
+        last_kjxjr = self.db.query_kjxjr(date=last_kjxjr_date)
+        kjxjr_data = [[today_kjxjr_date.replace('_', '-'), today_kjxjr + last_kjxjr, last_kjxjr, today_kjxjr]]
+        kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
 
         return today_df, sse_df, None
 

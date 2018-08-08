@@ -27,6 +27,9 @@ headers = {
 }
 
 
+kjxjr_base = 4228
+
+
 SSE_DOWNLOAD_URL = 'http://www.sse.com.cn/assortment/stock/list/share/'
 # SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
 SZSE_DOWNLOAD_URL = 'http://www.szse.cn/market/companys/company/index.html'
@@ -207,7 +210,7 @@ class Fetcher(object):
 
         req = requests.get(urljoin(url, newest_url), headers=h)
         tree = etree.HTML(req.text)
-        data = tree.xpath('(//table[@class="MsoNormalTable"])[1]/tbody/tr[3]/td[5]/p//text()')[0].strip()
+        data = tree.xpath('(//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p/b/span/text()')[0].strip()
         return newest_date, data
 
 
@@ -265,7 +268,7 @@ class Fetcher(object):
             result['tj_neeq'] = tj_neeq
 
         if kjxjr == True:
-            result['kjxjr_date'], result['kjxjr'] = self.download_kjxjr()
+            result['kjxjr_date'], result['kjxjr'] = self.download_kjxjr() + kjxjr_base
 
         # 将result直接写进文件中,parser读取文件,实现解耦合
         with open(os.path.join(self.filepath, 'result.json'), 'w') as f:
