@@ -197,8 +197,19 @@ class Fetcher(object):
         req = requests.get(url, headers=h)
         tree = etree.HTML(req.content)
 
-        newest_url = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/@href').strip()
-        newest_title = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/text()').strip()
+        newest_url = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/@href')
+        if len(newest_url) > 0:
+            newest_url = newest_url[0].strip()
+        else:
+            print('newest_url: ', newest_url)
+            return 158
+        newest_title = tree.xpath('//div[@class="sub_sameconrcc"]/ul/li[1]/a/text()')
+        if len(newest_title) > 0:
+            newest_title = newest_title[0].strip()
+        else:
+            print('newset_title: ', newest_title)
+            return 158
+
 
         title_pattern = r'^全市(20[1-9][0-9])年1\-(1?[0-9])月份科技型企业评价/认定情况通报$'
         newest_date = None
