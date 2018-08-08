@@ -8,7 +8,7 @@ import arrow
 
 def begin():
     f = Fetcher()
-    fetch_result = f.fetch()
+    fetch_result = f.fetch(kjxjr=False)
     p = Parser()
     parse_result = p.parse()
 
