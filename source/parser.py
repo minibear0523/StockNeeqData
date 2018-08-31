@@ -53,8 +53,8 @@ class Parser(object):
             'total_b': len(sse_b_titles),
             'total_a_tj': len(sse_a_tj_titles),
             'total_b_tj': len(sse_b_tj_titles),
-            'total_sse': total_sse,
-            'total_sse_tj': total_sse_tj
+            'total_sse': len(total_sse),
+            'total_sse_tj': len(total_sse_tj)
         }
 
     def parse_szse(self):
