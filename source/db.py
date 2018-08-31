@@ -45,8 +45,8 @@ class DB(object):
                 'total_a_tj': result[2],
                 'total_b': result[3],
                 'total_b_tj': result[4],
-                'total_sse': '',
-                'total_sse_tj': ''
+                'total_sse': result[12],
+                'total_sse_tj': result[13],
             }
             data['szse'] = {
                 'total_szse': result[5],
