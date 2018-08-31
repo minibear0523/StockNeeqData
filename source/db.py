@@ -38,7 +38,7 @@ class DB(object):
         sql = 'SELECT * FROM `stock_neeq_daily_data` WHERE updated_date="%s"' % date
         if self.cursor.execute(sql) > 0:
             result = self.cursor.fetchall()[0]
-            print(result)
+            # print(result)
             data = {}
             data['sse'] = {
                 'total_a': result[1],
