@@ -20,6 +20,7 @@ class DB(object):
         self.cursor = self.connect.cursor()
 
     def insert(self, data):
+        print(data)
         sql = 'INSERT INTO `stock_neeq_daily_data` (`sse_a_total`, `sse_a_tj`, `sse_b_total`, `sse_b_tj`, `sse_total`, `sse_tj_total`, `szse_total`, `szse_tj`, `neeq_total`, `neeq_tj`, `updated_date`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
         values = (int(data['sse']['total_a']), int(data['sse']['total_a_tj']), int(data['sse']['total_b']), int(data['sse']['total_b_tj']), int(data['sse']['total_sse']), int(data['sse']['total_sse_tj']), int(data['szse']['total_szse']), int(data['szse']['total_tj']), int(data['neeq']['total']), int(data['neeq']['tj']), arrow.now().format('YYYY-MM-DD'))
 
