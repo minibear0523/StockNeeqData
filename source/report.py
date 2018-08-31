@@ -134,7 +134,7 @@ class Report(object):
         ]
         sse_df = pd.DataFrame(sse_data, columns=stock_columns, index=sse_labels)
 
-        科技小巨人
+        # 科技小巨人
         today_kjxjr_date = today_data['kjxjr_date']
         today_kjxjr = today_data['kjxjr']
         last_kjxjr_date = arrow.get(today_kjxjr_date.replace('_', '-')).shift(months=-1).format('YYYY_MM')
