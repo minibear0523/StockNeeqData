@@ -94,7 +94,7 @@ class Report(object):
         kjxjr_columns = ['当前公布月份', '当前公布总量', '上月公布总量', '变化']
         total_labels = ['上交所', '深交所', '沪深两市', '新三板']
         sse_labels = ['上交所A板', '上交所B板', '上交所总量']
-        # kjxjr_labels = ['天津市科技小巨人认证企业']
+        kjxjr_labels = ['规模超亿元科技型企业']
 
         # 总量表格
         total_data = []
