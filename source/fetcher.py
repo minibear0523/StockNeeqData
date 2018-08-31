@@ -234,10 +234,10 @@ class Fetcher(object):
         if sse == True:
             self.download_sse()
             # 文件重命名
-            sse_a_filename_origin = './data/%s/A股' % self.date
-            sse_b_filename_origin = './data/%s/B股' % self.date
-            sse_a_filename_dist = './data/%s/SSE_A.csv' % self.date
-            sse_b_filename_dist = './data/%s/SSE_B.csv' % self.date
+            sse_a_filename_origin = '/home/zhanglei/data/%s/A股' % self.date
+            sse_b_filename_origin = '/home/zhanglei/data/%s/B股' % self.date
+            sse_a_filename_dist = '/home/zhanglei/data/%s/SSE_A.csv' % self.date
+            sse_b_filename_dist = '/home/zhanglei/data/%s/SSE_B.csv' % self.date
             if os.path.exists(sse_a_filename_origin + '.csv'):
                 os.rename(sse_a_filename_origin + '.csv', sse_a_filename_dist)
             else:
@@ -246,10 +246,10 @@ class Fetcher(object):
                 os.rename(sse_b_filename_origin + '.csv', sse_b_filename_dist)
             else:
                 os.rename(sse_b_filename_origin + '.xls', sse_b_filename_dist)
-            sse_a_tj_filename = './data/%s/A股 (1)' % self.date
-            sse_b_tj_filename = './data/%s/B股 (1)' % self.date
-            sse_a_tj_filename_dist = './data/%s/SSE_A_TJ.csv' % self.date
-            sse_b_tj_filename_dist = './data/%s/SSE_B_TJ.csv' % self.date
+            sse_a_tj_filename = '/home/zhanglei/data/%s/A股 (1)' % self.date
+            sse_b_tj_filename = '/home/zhanglei/data/%s/B股 (1)' % self.date
+            sse_a_tj_filename_dist = '/home/zhanglei/data/%s/SSE_A_TJ.csv' % self.date
+            sse_b_tj_filename_dist = '/home/zhanglei/data/%s/SSE_B_TJ.csv' % self.date
             if os.path.exists(sse_a_tj_filename + '.csv'):
                 os.rename(sse_a_tj_filename + '.csv', sse_a_tj_filename_dist)
             else:
@@ -268,8 +268,8 @@ class Fetcher(object):
 
         if szse == True:
             self.download_szse()
-            szse_filename_origin = './data/%s/上市公司列表.xlsx' % self.date
-            szse_filename_dist = './data/%s/SZSE.xlsx' % self.date
+            szse_filename_origin = '/home/zhanglei/data/%s/上市公司列表.xlsx' % self.date
+            szse_filename_dist = '/home/zhanglei/data/%s/SZSE.xlsx' % self.date
             os.rename(szse_filename_origin, szse_filename_dist)
             result['szse'] = szse_filename_dist
 
