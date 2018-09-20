@@ -96,7 +96,7 @@ class Fetcher(object):
 
         # 2.1 下载A股全量数据
         print('下载上交所A股全量数据')
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="download-export"]')))
+        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
         download_btn.click()
         time.sleep(1.5)
 
