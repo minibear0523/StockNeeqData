@@ -17,7 +17,6 @@ from urllib.parse import urljoin
 import re
 from pyvirtualdisplay import Display
 
-
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate',
@@ -26,9 +25,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
 }
 
-
 kjxjr_base = 4228
-
 
 SSE_DOWNLOAD_URL = 'http://www.sse.com.cn/assortment/stock/list/share/'
 # SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
@@ -42,6 +39,7 @@ class Fetcher(object):
     """
     从沪深两市以及新三板的网站上下载对应的统计文件.
     """
+
     def __init__(self):
         self.driver = None
         self.wait = None
@@ -59,7 +57,8 @@ class Fetcher(object):
         self.display = Display(visible=0, size=(1024, 768))
         self.display.start()
         options = webdriver.ChromeOptions()
-        options.add_argument('user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"')
+        options.add_argument(
+            'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"')
         options.add_argument('accept-language="zh-CN"')
         # 使用headless chrome取代之前的virtual display
         # options.add_argument('headless')
@@ -96,7 +95,8 @@ class Fetcher(object):
 
         # 2.1 下载A股全量数据
         print('下载上交所A股全量数据')
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
+        download_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
         download_btn.click()
         time.sleep(1.5)
 
@@ -107,7 +107,8 @@ class Fetcher(object):
         b_btn.click()
         time.sleep(1.5)
         self.driver.implicitly_wait(5)
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="download-export"]')))
+        download_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
         download_btn.click()
         time.sleep(1.5)
 
@@ -124,7 +125,8 @@ class Fetcher(object):
 
         # 4.1 下载B股天津数据
         print('下载上交所B股天津数据')
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="download-export"]')))
+        download_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
         download_btn.click()
         time.sleep(1.5)
 
@@ -135,10 +137,10 @@ class Fetcher(object):
         a_btn.click()
         time.sleep(1.5)
         self.driver.implicitly_wait(5)
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="download-export"]')))
+        download_btn = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//a[contains(@class, "download-export")]')))
         download_btn.click()
         time.sleep(1.5)
-
 
     def download_szse(self):
         """
@@ -147,8 +149,9 @@ class Fetcher(object):
         self._open(SZSE_DOWNLOAD_URL)
         print('下载深交所全量数据')
         # download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//table[contains(@class, "cls-title-table-common")]/tbody/tr/td[@align="right"]/a')))
-        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class="report-table-head clearfix table-head-tabs"]/div[@class="pull-right report-excel"]/a')))
-        
+        download_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH,
+                                                                   '//div[@class="report-table-head clearfix table-head-tabs"]/div[@class="pull-right report-excel"]/a')))
+
         download_btn.click()
         time.sleep(15)
 
@@ -210,7 +213,6 @@ class Fetcher(object):
             print('newset_title: ', newest_title)
             return 158
 
-
         title_pattern = r'^全市(20[1-9][0-9])年1\-(1?[0-9])月份科技型企业评价/认定情况通报$'
         newest_date = None
         g = re.match(title_pattern, newest_title)
@@ -223,7 +225,6 @@ class Fetcher(object):
         tree = etree.HTML(req.text)
         data = tree.xpath('(//table[@class="MsoNormalTable"][1]/tbody/tr[3]/td[6]/p/b/span/text()')[0].strip()
         return newest_date, data
-
 
     def fetch(self, sse=True, szse=True, neeq=True, kjxjr=True):
         """
