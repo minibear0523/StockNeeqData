@@ -12,6 +12,7 @@ class Report(object):
     """
     生成报告, 发送邮件
     """
+
     def __init__(self):
         self.report = None
         self.subject = None
@@ -32,7 +33,8 @@ class Report(object):
             print(today_data, last_data)
             if last_data['sse']['total_sse'] == 0:
                 last_data['sse']['total_sse'] = int(last_data['sse']['total_a']) + int(last_data['sse']['total_b'])
-                last_data['sse']['total_sse_tj'] = int(last_data['sse']['total_a_tj']) + int(last_data['sse']['total_b_tj'])
+                last_data['sse']['total_sse_tj'] = int(last_data['sse']['total_a_tj']) + int(
+                    last_data['sse']['total_b_tj'])
             total_data, sse_data, kjxjr_data = self._parse_weekly_data(today_data, last_data)
 
             self.report = total_data.to_html(escape=False)
@@ -60,7 +62,7 @@ class Report(object):
         解析当日数据
         """
         stock_columns = ['今日总量', '今日天津地区']
-        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板', '科技小巨人']
+        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板']
 
         today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
         today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
@@ -79,12 +81,11 @@ class Report(object):
             [today_szse, today_szse_tj],
             [today_sse + today_szse, today_sse_tj + today_szse_tj],
             [today_neeq, today_neeq_tj],
-            [today_kjxjr_date, today_kjxjr]
+            # [today_kjxjr_date, today_kjxjr]
         ]
 
         df = pd.DataFrame(data, columns=stock_columns, index=labels)
         return df
-
 
     def _parse_weekly_data(self, today_data, last_data):
         """
@@ -101,36 +102,42 @@ class Report(object):
         # 上交所
         today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
         today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
-        last_sse_a, last_sse_b = last_data['sse']['total_a'],  last_data['sse']['total_b']
+        last_sse_a, last_sse_b = last_data['sse']['total_a'], last_data['sse']['total_b']
         last_sse_a_tj, last_sse_b_tj = last_data['sse']['total_a_tj'], last_data['sse']['total_b_tj']
-
 
         today_sse = today_data['sse']['total_sse']
         last_sse = last_data['sse']['total_sse']
         today_sse_tj = today_data['sse']['total_sse_tj']
         last_sse_tj = last_data['sse']['total_sse_tj']
-        total_data.append([today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj])
+        total_data.append(
+            [today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj])
         # 深交所
         today_szse = today_data['szse']['total_szse']
         last_szse = last_data['szse']['total_szse']
         today_szse_tj = today_data['szse']['total_tj']
         last_szse_tj = last_data['szse']['total_tj']
-        total_data.append([today_szse, last_szse, today_szse - last_szse, today_szse_tj, last_szse_tj, today_szse_tj - last_szse_tj])
+        total_data.append(
+            [today_szse, last_szse, today_szse - last_szse, today_szse_tj, last_szse_tj, today_szse_tj - last_szse_tj])
         # 沪深两市
-        total_data.append([today_sse + today_szse, last_sse + last_szse, today_sse + today_szse - last_sse - last_szse, today_sse_tj + today_szse_tj, last_sse_tj + last_szse_tj, today_sse_tj + today_szse_tj - last_sse_tj - last_szse_tj])
+        total_data.append([today_sse + today_szse, last_sse + last_szse, today_sse + today_szse - last_sse - last_szse,
+                           today_sse_tj + today_szse_tj, last_sse_tj + last_szse_tj,
+                           today_sse_tj + today_szse_tj - last_sse_tj - last_szse_tj])
         # 新三板
         today_neeq = today_data['neeq']['total']
         last_neeq = last_data['neeq']['total']
         today_neeq_tj = today_data['neeq']['tj']
         last_neeq_tj = last_data['neeq']['tj']
-        total_data.append([today_neeq, last_neeq, today_neeq - last_neeq, today_neeq_tj, last_neeq_tj, today_neeq_tj - last_neeq_tj])
+        total_data.append(
+            [today_neeq, last_neeq, today_neeq - last_neeq, today_neeq_tj, last_neeq_tj, today_neeq_tj - last_neeq_tj])
 
         today_df = pd.DataFrame(total_data, columns=stock_columns, index=total_labels)
 
         # 上交所AB板
         sse_data = [
-            [today_sse_a, last_sse_a, today_sse_a - last_sse_a, today_sse_a_tj, last_sse_a_tj, today_sse_a_tj - last_sse_a_tj],
-            [today_sse_b, last_sse_b, today_sse_b - last_sse_b, today_sse_b_tj, last_sse_b_tj, today_sse_b_tj - last_sse_b_tj],
+            [today_sse_a, last_sse_a, today_sse_a - last_sse_a, today_sse_a_tj, last_sse_a_tj,
+             today_sse_a_tj - last_sse_a_tj],
+            [today_sse_b, last_sse_b, today_sse_b - last_sse_b, today_sse_b_tj, last_sse_b_tj,
+             today_sse_b_tj - last_sse_b_tj],
             [today_sse, last_sse, today_sse - last_sse, today_sse_tj, last_sse_tj, today_sse_tj - last_sse_tj]
         ]
         sse_df = pd.DataFrame(sse_data, columns=stock_columns, index=sse_labels)
@@ -144,7 +151,6 @@ class Report(object):
         kjxjr_df = pd.DataFrame(kjxjr_data, columns=kjxjr_columns, index=kjxjr_labels)
 
         return today_df, sse_df, None
-
 
     def send_report(self, to_addr):
         """
