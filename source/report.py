@@ -60,7 +60,7 @@ class Report(object):
         解析当日数据
         """
         stock_columns = ['今日总量', '今日天津地区']
-        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板']
+        labels = ['上交所A板', '上交所B板', '上交所', '深交所', '沪深两市', '新三板', '科技小巨人']
 
         today_sse_a, today_sse_b = today_data['sse']['total_a'], today_data['sse']['total_b']
         today_sse_a_tj, today_sse_b_tj = today_data['sse']['total_a_tj'], today_data['sse']['total_b_tj']
