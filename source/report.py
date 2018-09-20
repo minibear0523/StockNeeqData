@@ -169,3 +169,18 @@ class Report(object):
         )
 
         client.send(MAIL_SERVER, login=MAIL_LOGIN, password=MAIL_PASSWD, tls=False)
+
+    def send_exception(self):
+        from_addr = ('zhanglei@jixiang2003.com', '张磊')
+        to_addr = ('zhanglei@jixiang2003.com', '张磊')
+        subject = '股市数据报告异常'
+        html_body = '股市数据报告异常'
+
+        client = Envelope(
+            from_addr=from_addr,
+            to_addr=to_addr,
+            subject=subject,
+            html_body=html_body
+        )
+
+        client.send(MAIL_SERVER, login=MAIL_LOGIN, password=MAIL_PASSWD, tls=False)
