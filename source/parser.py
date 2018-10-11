@@ -44,14 +44,14 @@ class Parser(object):
         sse_b_titles = sse_b_df['公司简称 '].tolist()
         sse_a_tj_titles = sse_a_tj['公司简称 '].tolist()
         sse_b_tj_titles = sse_b_tj['公司简称 '].tolist()
-        print(len(sse_a_titles), sse_a_df.count())
-        print(len(sse_a_tj_titles), sse_a_tj.count())
+        # print(len(sse_a_titles), sse_a_df.count())
+        # print(len(sse_a_tj_titles), sse_a_tj.count())
 
         # 进行统计和去重
         total_sse = list(set(sse_a_titles + sse_b_titles))
         total_sse_tj = list(set(sse_a_tj_titles + sse_b_tj_titles))
-        print(len(total_sse))
-        print(len(total_sse_tj))
+        # print(len(total_sse))
+        # print(len(total_sse_tj))
         return {
             'total_a': len(sse_a_titles),
             'total_b': len(sse_b_titles),

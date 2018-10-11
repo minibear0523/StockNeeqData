@@ -12,6 +12,7 @@ def begin():
         fetch_result = f.fetch(kjxjr=False)
         p = Parser()
         parse_result = p.parse()
+        print(parse_result)
 
         db = DB()
         db.insert(parse_result)
