@@ -30,6 +30,8 @@ class Report(object):
             today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
             last_date = self.date.shift(days=-7).format('YYYY-MM-DD')
             last_data = self.db.query(date=last_date)
+            today_data['kjxjr_date'] = '2018_09'
+            today_data['kjxjr'] = 4403
             print(today_data, last_data)
             if last_data['sse']['total_sse'] == 0:
                 last_data['sse']['total_sse'] = int(last_data['sse']['total_a']) + int(last_data['sse']['total_b'])
