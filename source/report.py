@@ -24,7 +24,7 @@ class Report(object):
         """
         直接从数据库读取数据, 导入到pandas生成html代码
         """
-        if self.date.format('dddd') != 'Friday':
+        if self.date.format('dddd') == 'Friday':
             # 周五读取当日和上周五的数据
             # 将沪深两市分量和总量以及新三板放在一个表格中, 上交所A,B板一个表格, 科技小巨人一个表格
             today_data = self.db.query(date=self.date.format('YYYY-MM-DD'))
