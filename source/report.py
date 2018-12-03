@@ -50,7 +50,7 @@ class Report(object):
             self.report += '<br>'
             self.report += '全国新三板挂牌公司%s家, 其中天津%s家' % (total_data.loc['新三板', '本周总量'], total_data.loc['新三板', '本周天津地区'])
             self.report += '<br>'
-            self.report += '截止到2018年9月底,天津市科委评定的规模超万亿元科技型企业共计4,403家'
+            self.report += '截止到2018年10月底,天津市科委评定的规模超万亿元科技型企业共计4,419家'
 
             self.subject = '数据周报: %s至%s' % (last_date, self.date.format('YYYY-MM-DD'))
         else:

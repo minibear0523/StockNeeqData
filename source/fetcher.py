@@ -27,8 +27,13 @@ headers = {
 
 kjxjr_base = 4228
 
+# http://query.sse.com.cn/security/stock/downloadStockListFile.do?csrcCode=&stockCode=&areaName=&stockType=1
+# http://query.sse.com.cn/security/stock/downloadStockListFile.do?csrcCode=&stockCode=&areaName=&stockType=2
+# http://query.sse.com.cn/security/stock/downloadStockListFile.do?csrcCode=&stockCode=&areaName=19&stockType=1
+# http://query.sse.com.cn/security/stock/downloadStockListFile.do?csrcCode=&stockCode=&areaName=19&stockType=2
 SSE_DOWNLOAD_URL = 'http://www.sse.com.cn/assortment/stock/list/share/'
 # SZSE_DOWNLOAD_URL = 'http://www.szse.cn/main/marketdata/jypz/colist/'
+# http://www.szse.cn/api/report/ShowReport?SHOWTYPE=xlsx&CATALOGID=1110x&TABKEY=tab1&random=0.9630892115514045
 SZSE_DOWNLOAD_URL = 'http://www.szse.cn/market/companys/company/index.html'
 NEEQ_DOWNLOAD_URL = 'http://www.neeq.com.cn/nq/listedcompany.html'
 NEEQ_DATA_URL = 'http://www.neeq.com.cn/nqxxController/nqxx.do?page=0&typejb=T&xxzqdm=&xxzrlx=&xxhyzl=&xxssdq=&sortfield=xxzqdm&sorttype=asc&dicXxzbqs=&xxfcbj=&_=%s'
