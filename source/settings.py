@@ -1,8 +1,8 @@
 # encoding=UTF-8
 
-MAIL_LOGIN = 'zhanglei@jixiang2003.com'
-MAIL_PASSWD = 'bear900523'
-MAIL_SERVER = 'mail.jixiang2003.com'
+MAIL_LOGIN = 'monitor@jixiang2003.com'
+MAIL_PASSWD = 'Jixiang2018'
+MAIL_SERVER = 'smtp.jixiang2003.com'
 MAIL_TO_ADDR = [('zhanglei@jixiang2003.com', '张磊'), ]
 
 MYSQL_HOST = 'localhost'
